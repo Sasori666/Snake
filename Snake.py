@@ -1,8 +1,8 @@
 from tkinter import *
 import random
-WIDTH = 1000
-HEIGHT = 1000
-SEG_SIZE = 20
+WIDTH = 800
+HEIGHT = 600
+SEG_SIZE = 50
 IN_GAME = True
 def create_block():
     """ Создаем еду для змейки """
@@ -11,19 +11,23 @@ def create_block():
     posy = SEG_SIZE * random.randint(1, (HEIGHT - SEG_SIZE) / SEG_SIZE)
     BLOCK = c.create_oval(posx, posy,
                           posx + SEG_SIZE, posy + SEG_SIZE,
-                          fill="red")
+                          fill="lime")
 class Score(object):
     def __init__(self):
         self.score = 0
         self.x = 55
         self.y = 15
         c.create_text(self.x, self.y, text="Счёт: {}".format(self.score), font="Arial 20",
-                      fill="Yellow", tag="score", state='hidden')
+                      fill="black", tag="score", state='hidden')
     def increment(self):
         c.delete("score")
         self.score += 1
         c.create_text(self.x, self.y, text="Счёт: {}".format(self.score), font="Arial 20",
-                      fill="Yellow", tag="score")
+                      fill="black", tag="score")
+        if score=="20":
+            game_over_text==c.create_text(WIDTH / 2, HEIGHT / 2, text="You win!",
+                font='Arial 20', fill='red',
+                state='hidden')
     def reset(self):
         c.delete("score")
         self.score = 0
@@ -49,29 +53,35 @@ def main():
         set_state(restart_text, 'normal')
         set_state(game_over_text, 'normal')
         set_state(close_but, 'normal')
+
 class Segment(object):
     """ Сегмент змейки """
     def __init__(self, x, y):
         self.instance = c.create_rectangle(x, y,
                                            x + SEG_SIZE, y + SEG_SIZE,
-                                           fill="black")                        
+                                           fill="orange")
+                                           
 class Snake(object):
     """ Класс змейки """
     def __init__(self, segments):
         self.segments = segments
+
         self.mapping = {"Down": (0, 1), "Right": (1, 0),
                         "Up": (0, -1), "Left": (-1, 0)}
         self.vector = self.mapping["Right"]
+
     def move(self):
         """ Двигаем змейку в заданном направлении """
         for index in range(len(self.segments) - 1):
             segment = self.segments[index].instance
             x1, y1, x2, y2 = c.coords(self.segments[index + 1].instance)
             c.coords(segment, x1, y1, x2, y2)
+
         x1, y1, x2, y2 = c.coords(self.segments[-2].instance)
         c.coords(self.segments[-1].instance,
                  x1 + self.vector[0] * SEG_SIZE, y1 + self.vector[1] * SEG_SIZE,
                  x2 + self.vector[0] * SEG_SIZE, y2 + self.vector[1] * SEG_SIZE)
+
     def add_segment(self):
         """ Добавляем сегмент змейки """
         score.increment()
@@ -79,10 +89,12 @@ class Snake(object):
         x = last_seg[2] - SEG_SIZE
         y = last_seg[3] - SEG_SIZE
         self.segments.insert(0, Segment(x, y))
+
     def change_direction(self, event):
         """ Изменение направления движения змейки """
         if event.keysym in self.mapping:
             self.vector = self.mapping[event.keysym]
+
     def reset_snake(self):
         for segment in self.segments:
             c.delete(segment.instance)
@@ -105,6 +117,7 @@ def start_game():
     s = create_snake()
     c.bind("<KeyPress>", s.change_direction)
     main()
+
 def create_snake():
     segments = [Segment(SEG_SIZE, SEG_SIZE),
                 Segment(SEG_SIZE * 2, SEG_SIZE),
@@ -114,19 +127,19 @@ def close_win(root):
     exit()
 root = Tk()
 root.title("Змейка")
-c = Canvas(root, width=WIDTH, height=HEIGHT, bg="#9198e5")
+c = Canvas(root, width=WIDTH, height=HEIGHT, bg="purple")
 c.grid()
 c.focus_set()
 game_over_text = c.create_text(WIDTH / 2, HEIGHT / 2, text="Ты проиграл!",
-                               font='Arial 20', fill='purple',
+                               font='Arial 20', fill='red',
                                state='hidden')
 restart_text = c.create_text(WIDTH / 2, HEIGHT - HEIGHT / 3,
                              font='Arial 25',
-                             fill='yellow',
+                             fill='brown',
                              text="Начать новую игру",
                              state='hidden')
 close_but = c.create_text(WIDTH / 2, HEIGHT - HEIGHT / 5, font='Arial 25',
-                          fill='blue',
+                          fill='pink',
                           text="Выход из игры",
                           state='hidden')
 c.tag_bind(restart_text, "<Button-1>", clicked)
