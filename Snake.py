@@ -24,10 +24,10 @@ class Score(object):
         self.score += 1
         c.create_text(self.x, self.y, text="Счёт: {}".format(self.score), font="Arial 20",
                       fill="black", tag="score")
-        if score=="20":
-            game_over_text==c.create_text(WIDTH / 2, HEIGHT / 2, text="You win!",
-                font='Arial 20', fill='red',
-                state='hidden')
+        #if score==1:
+            #game_over_text==c.create_text(WIDTH / 2, HEIGHT / 2, text="You win!",
+               # font='Arial 20', fill='red',
+                #state='hidden')
     def reset(self):
         c.delete("score")
         self.score = 0
